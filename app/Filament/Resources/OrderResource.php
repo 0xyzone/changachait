@@ -38,7 +38,7 @@ class OrderResource extends Resource
                         Select::make('item_id')
                             ->required()
                             ->relationship('item', 'name')
-                            ->live()
+                            ->live(onBlur: true)
                             ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                             ->columnSpan([
                                 'md' => '8',
@@ -48,7 +48,7 @@ class OrderResource extends Resource
                             ->numeric()
                             ->inputMode('decimal')
                             ->disabled(fn(Get $get) => !$get('item_id'))
-                            ->live()
+                            ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                 $item = Item::where('id', $get('item_id'))->first();
                                 $price = $item->price;
