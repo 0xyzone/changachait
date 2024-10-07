@@ -1,0 +1,146 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use Filament\Forms;
+use App\Models\Item;
+use Filament\Tables;
+use App\Models\Order;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\Placeholder;
+use App\Filament\Resources\OrderResource\Pages;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\OrderResource\RelationManagers;
+
+class OrderResource extends Resource
+{
+    protected static ?string $model = Order::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                \Filament\Forms\Components\Repeater::make('items')
+                    ->relationship('items')
+                    ->columnSpanFull()
+                    ->schema([
+                        Select::make('item_id')
+                            ->required()
+                            ->relationship('item', 'name')
+                            ->live()
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                            ->columnSpan(8),
+                        TextInput::make('quantity')
+                            ->required()
+                            ->numeric()
+                            ->inputMode('decimal')
+                            ->disabled(fn(Get $get) => !$get('item_id'))
+                            ->live()
+                            ->afterStateUpdated(function ($state, Get $get, Set $set) {
+                                $item = Item::where('id', $get('item_id'))->first();
+                                $price = $item->price;
+                                $sub_total = $price * $state;
+                                $set('sub_total', $sub_total);
+
+                                $items = $get('../../items');
+
+                                $main_sub_total = array_reduce($items, function ($carry, $item) {
+                                    return $carry + $item['sub_total'];
+                                }, 0);
+
+                                $set('../../sub_total', $main_sub_total);
+                                $set('../../grand_total', $main_sub_total);
+                                // $main_sub_total = sum($sub_totals['sub_total']);
+                                // dd($main_sub_total);
+                            })
+                            ->step(0.50)
+                            ->columnSpan(2),
+                        TextInput::make('sub_total')
+                            ->dehydrated()
+                            ->prefix('रु')
+                            ->disabled()
+                            ->dehydrated()
+                            ->columnSpan(2)
+                    ])->columns(12),
+                Forms\Components\Hidden::make('sub_total'),
+                Forms\Components\TextInput::make('sub_total')
+                    ->required()
+                    ->prefix('रु')
+                    ->disabled()
+                    ->dehydrated()
+                    ->numeric(),
+                Forms\Components\TextInput::make('grand_total')
+                    ->required()
+                    ->prefix('रु')
+                    ->disabled()
+                    ->dehydrated()
+                    ->numeric(),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('id'),
+                Tables\Columns\TextColumn::make('items.item.name')
+                    ->listWithLineBreaks()
+                    ->limitList(2)
+                    ->badge(),
+                Tables\Columns\TextColumn::make('sub_total')
+                    ->prefix('रु ')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('grand_total')
+                    ->prefix('रु ')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListOrders::route('/'),
+            // 'create' => Pages\CreateOrder::route('/create'),
+            // 'edit' => Pages\EditOrder::route('/{record}/edit'),
+        ];
+    }
+}
