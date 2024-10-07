@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\URL;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
@@ -25,7 +26,8 @@ class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static ?string $activeNavigationIcon = 'heroicon-m-clipboard-document-list';
 
     public static function form(Form $form): Form
     {
@@ -34,10 +36,17 @@ class OrderResource extends Resource
                 \Filament\Forms\Components\Repeater::make('items')
                     ->relationship('items')
                     ->columnSpanFull()
+                    ->collapsible()
+                    ->itemLabel(function (array $state){
+                        $item = Item::where('id', $state['item_id'])->first();
+                        return $state['item_id'] ? $item->name . ($state['quantity'] ? ' (x' . $state['quantity'] . ') | रु. ' . $state['sub_total'] : '' ) : null;
+                    }) 
                     ->schema([
                         Select::make('item_id')
                             ->required()
                             ->relationship('item', 'name')
+                            ->searchable()
+                            ->preload()
                             ->live(onBlur: true)
                             ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                             ->columnSpan([
@@ -91,23 +100,35 @@ class OrderResource extends Resource
                     ->disabled()
                     ->dehydrated()
                     ->numeric(),
-                Forms\Components\TextInput::make('received_amount')
-                    ->required()
-                    ->prefix('रु')
-                    ->disabled(fn(Get $get) => !$get('grand_total'))
-                    ->live(onBlur: true)
-                    ->afterStateUpdated(function ($state, Get $get, Set $set) {
-                        $grand_total = $get('grand_total');
-                        $return_amount = $state - $grand_total;
-                        $set('return_amount', $return_amount);
-                    })
-                    ->numeric(),
-                Forms\Components\TextInput::make('return_amount')
-                    ->required()
-                    ->prefix('रु')
-                    ->disabled()
-                    ->dehydrated()
-                    ->numeric(),
+                Section::make('Payments')
+                    ->schema([
+                        Forms\Components\Select::make('payment_method')
+                        ->options([
+                            'esewa' => 'eSewa',
+                            'fonepay' => 'FonePay',
+                            'cash' => 'Cash',
+                        ])
+                        ->required()
+                        ->default('cash'),
+                        Forms\Components\TextInput::make('received_amount')
+                            ->required()
+                            ->prefix('रु')
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function ($state, Get $get, Set $set) {
+                                $grand_total = $get('grand_total');
+                                $return_amount = $state ? $state - $grand_total : null;
+                                $set('return_amount', $return_amount);
+                            })
+                            ->numeric(),
+                        Forms\Components\TextInput::make('return_amount')
+                            ->required()
+                            ->prefix('रु')
+                            ->disabled()
+                            ->dehydrated()
+                            ->numeric(),
+                    ])
+                    ->hidden(fn(Get $get) => !$get('grand_total'))
+                    ->columns(3),
             ]);
     }
 
