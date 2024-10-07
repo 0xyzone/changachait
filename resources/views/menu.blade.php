@@ -148,7 +148,7 @@
             <li></li>
         </ul>
     </div>
-    <div class="overflow-y-auto">
+    <div class="h-full overflow-y-auto">
         <div class="text-white flex justify-center items-center pt-10 flex-col gap-2">
             <h1 class="text-6xl font-bold text-amber-400">Star Newari Khaja</h1>
             <p class="text-3xl">Chagal, Kathmandu, Nepal</p>
