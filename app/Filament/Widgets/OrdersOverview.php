@@ -22,7 +22,7 @@ class OrdersOverview extends BaseWidget
             Card::make('Total Earning', 'Rs. ' . number_format($earnings, 2))
                 ->description('Earnings so far')
                 ->color('success'),
-            Card::make('To Provide', 'Rs. ' . number_format($earnings, 2))
+            Card::make('To Provide', 'Rs. ' . number_format($toProvide, 2))
                 ->description('Amount to deposit to Mice Events.')
                 ->color('success'),
         ];

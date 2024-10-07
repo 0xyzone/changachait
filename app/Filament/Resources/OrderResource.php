@@ -11,7 +11,9 @@ use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\URL;
 use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Placeholder;
@@ -38,7 +40,9 @@ class OrderResource extends Resource
                             ->relationship('item', 'name')
                             ->live()
                             ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                            ->columnSpan(8),
+                            ->columnSpan([
+                                'md' => '8',
+                            ]),
                         TextInput::make('quantity')
                             ->required()
                             ->numeric()
@@ -63,15 +67,18 @@ class OrderResource extends Resource
                                 // dd($main_sub_total);
                             })
                             ->step(0.50)
-                            ->columnSpan(2),
+                            ->columnSpan([
+                                'md' => '2',
+                            ]),
                         TextInput::make('sub_total')
                             ->dehydrated()
                             ->prefix('रु')
                             ->disabled()
                             ->dehydrated()
-                            ->columnSpan(2)
+                            ->columnSpan([
+                                'md' => '2',
+                            ])
                     ])->columns(12),
-                Forms\Components\Hidden::make('sub_total'),
                 Forms\Components\TextInput::make('sub_total')
                     ->required()
                     ->prefix('रु')
@@ -79,6 +86,23 @@ class OrderResource extends Resource
                     ->dehydrated()
                     ->numeric(),
                 Forms\Components\TextInput::make('grand_total')
+                    ->required()
+                    ->prefix('रु')
+                    ->disabled()
+                    ->dehydrated()
+                    ->numeric(),
+                Forms\Components\TextInput::make('received_amount')
+                    ->required()
+                    ->prefix('रु')
+                    ->disabled(fn(Get $get) => !$get('grand_total'))
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function ($state, Get $get, Set $set) {
+                        $grand_total = $get('grand_total');
+                        $return_amount = $state - $grand_total;
+                        $set('return_amount', $return_amount);
+                    })
+                    ->numeric(),
+                Forms\Components\TextInput::make('return_amount')
                     ->required()
                     ->prefix('रु')
                     ->disabled()
@@ -120,12 +144,18 @@ class OrderResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('Print Invoice')
+                    ->url(function (Model $record) {
+                        return URL::route('invoice.print', ['order' => $record]);
+                    }, shouldOpenInNewTab: true)
+                    ->button()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('id', 'desc');
     }
 
     public static function getRelations(): array
