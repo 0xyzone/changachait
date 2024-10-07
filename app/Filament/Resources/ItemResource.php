@@ -34,6 +34,8 @@ class ItemResource extends Resource
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
+                Forms\Components\Textarea::make('description')
+                    ->unique(ignoreRecord: true),
                 Forms\Components\TextInput::make('price')
                     ->required()
                     ->numeric()
