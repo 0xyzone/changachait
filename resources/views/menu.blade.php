@@ -133,7 +133,7 @@
 
     </style>
 </head>
-<body class="w-screen max-h-screen overflow-hidden">
+<body class="w-screen h-screen">
     <div class="area absolute top-0 -z-10">
         <ul class="circles">
             <li></li>
@@ -148,26 +148,23 @@
             <li></li>
         </ul>
     </div>
-    <div class="h-full overflow-y-auto">
-        <div class="text-white flex justify-center items-center pt-10 flex-col gap-2">
-            <h1 class="text-6xl font-bold text-amber-400">Star Newari Khaja</h1>
-            <p class="text-3xl">Chagal, Kathmandu, Nepal</p>
-            <p class="text-amber-400"><span class="font-bold text-white">M: </span>9861748449 | <span class="font-bold text-white">E: </span> nabin1969@gmail.com</p>
-            <p class="animate-pulse px-4 py-2 rounded-lg bg-amber-400 font-bold text-2xl text-neutral-800">We offer take aways and home delivery from our store as well!</p>
+    <div class="text-white flex justify-center items-center pt-10 flex-col gap-2">
+        <h1 class="text-6xl font-bold text-amber-400">Star Newari Khaja</h1>
+        <p class="text-3xl">Chagal, Kathmandu, Nepal</p>
+        <p class="text-amber-400"><span class="font-bold text-white">M: </span>9861748449 | <span class="font-bold text-white">E: </span> nabin1969@gmail.com</p>
+        <p class="animate-pulse px-4 py-2 rounded-lg bg-amber-400 font-bold text-2xl text-neutral-800">We offer take aways and home delivery from our store as well!</p>
+    </div>
+    <div class="text-6xl font-bold text-white flex justify-center pt-5">
+        Menu
+    </div>
+    <div class="grid grid-cols-5 gap-4 max-w-7xl mx-auto pt-5">
+        @foreach ($items as $item)
+        <div class="bg-gray-300 p-4 rounded-lg">
+            <img src="{{ $item->photo ? asset('storage/' . $item->photo) : asset('img/defaultImage.png') }}" alt="{{ $item->name . ' photo' }}" class="aspect-square rounded-lg shadow-xl {{ $item->photo ? 'object-cover' : 'object-scale-down bg-white' }}">
+            <p class="text-xl font-bold pt-2">{{ $item->name }}</p>
+            <p class="text-lg font-bold">रु {{ $item->price }}</p>
         </div>
-        <div class="text-6xl font-bold text-white flex justify-center pt-5">
-            Menu
-        </div>
-        <div class="grid grid-cols-5 gap-4 max-w-7xl mx-auto pt-5">
-            @foreach ($items as $item)
-            <div class="bg-gray-300 p-4 rounded-lg">
-                <img src="{{ $item->photo ? asset('storage/' . $item->photo) : asset('img/defaultImage.png') }}" alt="{{ $item->name . ' photo' }}" class="aspect-square rounded-lg shadow-xl {{ $item->photo ? 'object-cover' : 'object-scale-down bg-white' }}">
-                <p class="text-xl font-bold pt-2">{{ $item->name }}</p>
-                <p class="text-lg font-bold">रु {{ $item->price }}</p>
-            </div>
-            @endforeach
-        </div>
-
+        @endforeach
     </div>
 </body>
 </html>
