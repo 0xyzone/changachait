@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect(route('filament.app.pages.dashboard'));
-});
+})->name('dashboard');
 
 Route::get('/invoices/{order}/print', [CouponPrint::class, 'print'])->name('invoice.print');
-Route::get('menu', function () {
+Route::get('/menu', function () {
     $items = Item::all();
     return view('menu', compact('items'));
 })->name('menu');
