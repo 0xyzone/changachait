@@ -133,7 +133,7 @@
 
     </style>
 </head>
-<body class="w-screen h-screen overflow-x-auto">
+<body class="w-screen max-h-screen overflow-y-auto">
     <div class="area absolute top-0 -z-10">
         <ul class="circles">
             <li></li>
