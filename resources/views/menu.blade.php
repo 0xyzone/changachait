@@ -159,7 +159,7 @@
     <div class="text-6xl font-bold text-white flex justify-center pt-5">
         Menu
     </div>
-    <div class="grid grid-cols-4 gap-4 max-w-7xl mx-auto pt-5">
+    <div class="grid grid-cols-4 gap-4 max-w-6xl mx-auto pt-5">
         @foreach ($items as $item)
         <div class="bg-gray-300 p-4 rounded-lg">
             <img src="{{ $item->photo ? asset('storage/' . $item->photo) : asset('img/defaultImage.png') }}" alt="{{ $item->name . ' photo' }}" class="aspect-square rounded-lg shadow-xl {{ $item->photo ? 'object-cover' : 'object-scale-down bg-white' }}">
