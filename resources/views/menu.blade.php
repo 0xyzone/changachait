@@ -148,16 +148,18 @@
             <li></li>
         </ul>
     </div>
+    <p class="animate-pulse px-4 py-2 rounded-lg bg-amber-400 font-bold text-2xl text-neutral-800 absolute top-4 left-4 max-w-64 text-center">We offer take aways and home delivery from our store as well!</p>
+    <p class="animate-pulse px-4 py-2 rounded-lg bg-amber-400 font-bold text-2xl text-neutral-800 absolute top-4 right-4 max-w-64 text-center">We offer take aways and home delivery from our store as well!</p>
     <div class="text-white flex justify-center items-center pt-10 flex-col gap-2">
-        <h1 class="text-6xl font-bold text-amber-400">Star Newari Khaja</h1>
+        <h1 class="text-6xl font-bold text-amber-400">Star Newari Khaja Ghar</h1>
         <p class="text-3xl">Chagal, Kathmandu, Nepal</p>
         <p class="text-amber-400"><span class="font-bold text-white">M: </span>9861748449 | <span class="font-bold text-white">E: </span> nabin1969@gmail.com</p>
-        <p class="animate-pulse px-4 py-2 rounded-lg bg-amber-400 font-bold text-2xl text-neutral-800">We offer take aways and home delivery from our store as well!</p>
+        <p class="px-4 py-2 rounded-lg bg-amber-400 font-bold text-lg text-neutral-800">Order once placed is not refundable!</p>
     </div>
     <div class="text-6xl font-bold text-white flex justify-center pt-5">
         Menu
     </div>
-    <div class="grid grid-cols-5 gap-4 max-w-7xl mx-auto pt-5">
+    <div class="grid grid-cols-4 gap-4 max-w-7xl mx-auto pt-5">
         @foreach ($items as $item)
         <div class="bg-gray-300 p-4 rounded-lg">
             <img src="{{ $item->photo ? asset('storage/' . $item->photo) : asset('img/defaultImage.png') }}" alt="{{ $item->name . ' photo' }}" class="aspect-square rounded-lg shadow-xl {{ $item->photo ? 'object-cover' : 'object-scale-down bg-white' }}">
