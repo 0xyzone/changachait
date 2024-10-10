@@ -45,12 +45,7 @@ class ItemResource extends Resource
                 Forms\Components\FileUpload::make('photo')
                     ->image()
                     ->directory('images/itemPhotos')
-                    ->moveFiles()
-                    ->getUploadedFileNameForStorageUsing(
-                        fn(TemporaryUploadedFile $file, Get $get): string =>
-                        (string) str($get('name') . '.')
-                            ->finish($file->getClientOriginalExtension())
-                    ),
+                    ->moveFiles(),
             ]);
     }
 
