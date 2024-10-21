@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources\OrderResource\Pages;
 
+use Filament\Actions;
 use App\Filament\Exports\OrderExporter;
 use App\Filament\Resources\OrderResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Actions\Exports\Enums\ExportFormat;
 
 class ListOrders extends ListRecords
 {
@@ -16,7 +17,10 @@ class ListOrders extends ListRecords
         return [
             Actions\CreateAction::make(),
             Actions\ExportAction::make()
-            ->exporter(OrderExporter::class),
+                ->exporter(OrderExporter::class)
+                ->formats([
+                    ExportFormat::Csv,
+                ]),
         ];
     }
 }
