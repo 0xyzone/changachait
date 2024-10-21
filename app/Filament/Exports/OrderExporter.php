@@ -16,6 +16,7 @@ class OrderExporter extends Exporter
         return [
             ExportColumn::make('id')
                 ->label('ID'),
+            ExportColumn::make('items.item.name'),
             ExportColumn::make('sub_total'),
             ExportColumn::make('grand_total'),
             ExportColumn::make('return_amount'),
